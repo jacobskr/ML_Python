@@ -12,6 +12,6 @@ Topics covered:
 7. Dimensionality Reduction
 8. Clustering
 
-Jupyter notebooks for each topic are found in the Projects folder.
+Jupyter Notebooks for each topic are found in the Projects folder.
 
 Thank you for checking out the repository!
