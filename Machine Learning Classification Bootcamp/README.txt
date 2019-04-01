@@ -1,6 +1,6 @@
 The Machine Learning Classification Bootcamp on Udemy.com taught by Dr. Ryan Ahmed.
 
-All data used is either in the Data folder or imported through a package (seaborn, ect).
+All data used is either in the Data folders or imported through a package (sklearn, seaborn, ect).
 
 Topics covered:
 1. Logistic Regression
