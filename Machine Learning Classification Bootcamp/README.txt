@@ -9,6 +9,4 @@ Topics covered:
 4. Decision Trees and Random Forest
 5. Naive Bayes Classifiers
 
-Jupyter Notebooks for each topic are found in the Projects folder.
-
 Thank you for checking out the repository!
