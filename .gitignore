@@ -1,3 +1,5 @@
 # IPython notebook checkpoints
 .ipynb_checkpoints/
 Machine Learning Classification Bootcamp/Naive Bayes Classifiers/Data/creditcard.csv
+*.json
+*.lock
