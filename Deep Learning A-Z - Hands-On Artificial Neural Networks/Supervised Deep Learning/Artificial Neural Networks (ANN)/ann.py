@@ -97,8 +97,6 @@ cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True)
 accuracy_score(y_test, y_pred)
 
-# Next step could be to do parameter training to get higher accuracy
-
 # =============================================================================
 # Homework: 
 # Use our ANN model to predict if the customer with the following informations will leave the bank: 
@@ -119,5 +117,66 @@ accuracy_score(y_test, y_pred)
 hmwk = clf.predict(sc.transform(np.array([[0, 0, 600, 1, 40, 3,
                                            60000, 2, 1, 1, 50000]])))
 hmwk > 0.5
+
+# Part 4 - Evaluating, improving, and tuning ANN
+
+# Evaluating the ANN
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import cross_val_score
+from keras.models import Sequential
+from keras.layers import Dense
+
+
+def build_classifier():
+    clf = Sequential()
+    clf.add(Dense(units=6, kernel_initializer='uniform',activation='relu', input_dim=11))
+    clf.add(Dense(units=6, kernel_initializer='uniform', activation='relu'))
+    clf.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'))
+    clf.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return clf
+
+
+clf = KerasClassifier(build_fn=build_classifier, batch_size=10, epochs=100)
+accuracies = cross_val_score(estimator=clf,
+                             X=X_train, y=y_train,
+                             cv=5, n_jobs=-1)
+mean = accuracies.mean()
+variance = accuracies.std()
+
+# Dropout regularization to reduce overfitting if needed
+    #If you have overfitting, suggest to add dropout to all hidden layers
+    #Start with p=0.1 and if still overfitting, go up
+# from keras.layers import Dropout
+# add 'clf.add(Dropout(p=0.1))' after every hidden layer add
+
+
+# Tuning the ANN
+from sklearn.model_selection import GridSearchCV
+
+
+def build_classifier(optimizer):
+    clf = Sequential()
+    clf.add(Dense(units=6, kernel_initializer='uniform',activation='relu', input_dim=11))
+    clf.add(Dense(units=6, kernel_initializer='uniform', activation='relu'))
+    clf.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'))
+    clf.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    return clf
+
+
+clf = KerasClassifier(build_fn=build_classifier)
+
+params = {'batch_size': [25, 32],
+          'epochs': [100, 500],
+          'optimizer': ['adam', 'rmsprop']}
+
+grid_search = GridSearchCV(estimator=clf,
+                           param_grid=params,
+                           scoring='accuracy',
+                           cv=10, n_jobs=-1)
+grid_search = grid_search.fit(X_train, y_train)
+best_params = grid_search.best_params_
+best_accuracy = grid_search.best_score_
+
+
 
 
