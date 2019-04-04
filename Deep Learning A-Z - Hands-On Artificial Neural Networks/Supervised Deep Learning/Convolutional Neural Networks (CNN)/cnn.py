@@ -3,9 +3,6 @@
 # Don't need to do any preprocessing because of how the data is set up in folders.
 
 # Part 1 - Building the CNN
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Importing the Keras libraries and packages
 from keras.models import Sequential
@@ -117,3 +114,17 @@ clf.fit_generator(training_set,
                     epochs=25,
                     validation_data=test_set,
                     validation_steps=63)
+
+
+# Part 3 - Making new predictions
+import numpy as np
+from keras.preprocessing import image
+test_image = image.load_img('Data/single_prediction/cat_or_dog_1.jpg', target_size = (64, 64))
+test_image = image.img_to_array(test_image)
+test_image = np.expand_dims(test_image, axis = 0)
+result = clf.predict(test_image)
+training_set.class_indices
+if result[0][0] == 1:
+    prediction = 'dog'
+else:
+    prediction = 'cat'
