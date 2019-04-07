@@ -20,7 +20,8 @@ X = sc.fit_transform(X)
     # Future models we will build from scratch
 from minisom import MiniSom
 som = MiniSom(x=10, y=10, input_len=15, sigma=1.0,
-              learning_rate=0.5, decay_function=None)
+              learning_rate=0.5, decay_function=None,
+              random_seed=3)
 
     # Randomly initialize weights
 som.random_weights_init(X)
@@ -30,4 +31,23 @@ som.train_random(data=X, num_iteration=100)
 
 # Visualize the results
 from pylab import bone, pcolor, colorbar, plot, show
-bone()
+bone();
+pcolor(som.distance_map().T);
+colorbar();
+markers = ['o', 's']
+colors = ['r', 'g']
+for i, x in enumerate(X):
+    w = som.winner(x)
+    plot(w[0] + 0.5,
+         w[1] + 0.5,
+         markers[y[i]],
+         markeredgecolor = colors[y[i]],
+         markerfacecolor = 'None',
+         markersize = 10,
+         markeredgewidth = 2);
+show();
+
+# Finding the frauds
+mappings = som.win_map(X)
+frauds = np.concatenate((mappings[(2,8)], mappings[(7,7)]), axis=0)
+frauds = sc.inverse_transform(frauds)
