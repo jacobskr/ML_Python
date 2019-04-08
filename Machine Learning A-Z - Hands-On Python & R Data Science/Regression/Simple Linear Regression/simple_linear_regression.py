@@ -1,3 +1,5 @@
+# Simple Linear Regression
+
 # Data Preprocessing
 
 # Importing the Libraries
@@ -17,6 +19,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     random_state=0)
 
 # Feature Scaling - Don't need to do, library takes care of it for us
+
+# Run Regression
 
 # Fitting Simple Linear Regression to the Training set
 from sklearn.linear_model import LinearRegression
