@@ -19,3 +19,14 @@ dataset$Country = factor(x = dataset$Country,
 dataset$Purchased = factor(x = dataset$Purchased,
                            levels = c('No', 'Yes'),
                            labels = c(0, 1))
+
+# Splitting the dataset into the Training set and Test set
+library(caTools)
+set.seed(123)
+split = sample.split(Y = dataset$Purchased, SplitRatio = 0.8)
+training_set = subset(x = dataset, split == TRUE)
+test_set = subset(x = dataset, split == FALSE)
+
+# Feature Scaling
+training_set[, 2:3] = scale(training_set[, 2:3])
+test_set[, 2:3] = scale(test_set[, 2:3])
