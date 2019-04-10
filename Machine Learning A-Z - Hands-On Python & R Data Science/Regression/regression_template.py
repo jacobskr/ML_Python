@@ -30,20 +30,12 @@ y_train = sc_y.fit_transform(y_train)"""
 # Predicting a new result
 y_pred = regressor.predict()
 
-# Visualising the Regression results
-plt.scatter(X, y, color = 'red')
-plt.plot(X, regressor.predict(X), color = 'blue')
-plt.title('Truth or Bluff (Regression Model)')
-plt.xlabel('Position level')
-plt.ylabel('Salary')
-plt.show()
-
-# Visualising the Regression results (for higher resolution and smoother curve)
+# Visualising the Regression results - For SLR
 X_grid = np.arange(min(X), max(X), 0.1)
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.scatter(X, y, color = 'red')
 plt.plot(X_grid, regressor.predict(X_grid), color = 'blue')
-plt.title('Truth or Bluff (Regression Model)')
-plt.xlabel('Position level')
-plt.ylabel('Salary')
+plt.title('')
+plt.xlabel('')
+plt.ylabel('')
 plt.show()
