@@ -28,6 +28,6 @@ ggplot() +
              colour = 'red') +
   geom_line(aes(x = x_grid, y = predict(regressor, newdata = data.frame(Level = x_grid))),
             colour = 'blue') +
-  ggtitle('') +
-  xlab('') +
-  ylab('')
+  ggtitle('Truth or Bluff') +
+  xlab('Level') +
+  ylab('Salary')
