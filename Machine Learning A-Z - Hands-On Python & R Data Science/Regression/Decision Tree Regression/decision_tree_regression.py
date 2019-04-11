@@ -35,11 +35,3 @@ plt.title('Truth or Bluff');
 plt.xlabel('Level');
 plt.ylabel('Salary');
 plt.show();
-
-# Can see overfitting even better without X_grid:
-plt.scatter(X, y, color = 'red');
-plt.plot(X, regressor.predict(X), color = 'blue');
-plt.title('Truth or Bluff');
-plt.xlabel('Level');
-plt.ylabel('Salary');
-plt.show();
