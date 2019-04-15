@@ -35,7 +35,7 @@ colnames(grid_set) = c('Age', 'EstimatedSalary')
 prod_set = predict(classifier, type = 'response', newdata = grid_set)
 y_grid = ifelse(prod_set > 0.5, 1, 0)
 plot(set[, -3],
-     main = 'Logistic Regression (Training Set)',
+     main = '(Training Set)',
      xlab = 'Age', ylab = 'Esimated Salary',
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
@@ -51,7 +51,7 @@ colnames(grid_set) = c('Age', 'EstimatedSalary')
 prod_set = predict(classifier, type = 'response', newdata = grid_set)
 y_grid = ifelse(prod_set > 0.5, 1, 0)
 plot(set[, -3],
-     main = 'Logistic Regression (Test Set)',
+     main = '(Test Set)',
      xlab = 'Age', ylab = 'Esimated Salary',
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
