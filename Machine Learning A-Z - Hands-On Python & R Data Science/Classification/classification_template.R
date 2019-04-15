@@ -1,4 +1,4 @@
-# Logistic Regression
+# Classification Template
 
 # Importing the dataset
 dataset = read.csv('Data\\.csv')
