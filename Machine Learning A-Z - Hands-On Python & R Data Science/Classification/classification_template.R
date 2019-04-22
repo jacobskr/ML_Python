@@ -19,8 +19,7 @@ test_set[, 1:2] = scale(test_set[, 1:2])
 # Create classifier here.
 
 # Predicting the Test set results
-prod_pred = predict(classifier, type = 'response', newdata = test_set[-3])
-y_pred = ifelse(prod_pred > 0.5, 1, 0)
+y_pred = predict(classifier, type = 'response', newdata = test_set[-3])
 
 # Making the Confusion Matrix
 cm = table(test_set[, 3], y_pred)
@@ -40,7 +39,7 @@ plot(set[, -3],
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
 points(grid_set, pch = '.', col = ifelse(y_grid == 1, 'springgreen3', 'tomato'))
-points(set, pch = 21, bg = ifelse(set[, 3], 'green4', 'red3'))
+points(set, pch = 21, bg = ifelse(set[, 3] == 1, 'green4', 'red3'))
 
 # Visualize the Test set results
 set =  test_set
@@ -56,5 +55,5 @@ plot(set[, -3],
      xlim = range(X1), ylim = range(X2))
 contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
 points(grid_set, pch = '.', col = ifelse(y_grid == 1, 'springgreen3', 'tomato'))
-points(set, pch = 21, bg = ifelse(set[, 3], 'green4', 'red3'))
+points(set, pch = 21, bg = ifelse(set[, 3] == 1, 'green4', 'red3'))
 
