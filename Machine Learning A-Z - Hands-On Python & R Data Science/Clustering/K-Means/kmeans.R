@@ -26,4 +26,4 @@ clusplot(X,
          span = TRUE,
          main = paste('Clusters of Clients'),
          xlab = 'Annual Income',
-         ylab = 'Soending Score')
+         ylab = 'Spending Score')
