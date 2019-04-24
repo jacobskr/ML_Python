@@ -32,4 +32,10 @@ nb_users = np.unique(np.append(training_set[:,0],test_set[:,0])).size
 nb_movies = np.unique(np.append(training_set[:,1],test_set[:,1])).size
 
 # Converting the data into an array with users in lines and movies in columns
-
+def convert(data):
+    new_data = []
+    for id_users in range(1, nb_users + 1):
+        id_movies = data[:, 1][data[:, 0] == id_users]
+        id_ratings = data[:, 2][data[:, 0] == id_users]
+        ratings = np.zeros(nb_movies)
+        ratings[id_movies - 1]
