@@ -28,3 +28,5 @@ test_set = pd.read_csv('Data\\ml-100k\\u1.test', delimiter='\t',
 test_set = np.array(test_set, dtype='int')
 
 # Getting the number of users and movies
+nb_users = np.unique(np.append(training_set[:,0],test_set[:,0])).size
+nb_movies = np.unique(np.append(training_set[:,1],test_set[:,1])).size
