@@ -17,8 +17,8 @@ from nltk.stem.porter import PorterStemmer
 corpus = []
 for i in range(0,len(dataset)):
     review = re.sub(pattern='[^a-zA-Z]', # Don't remove lowercase or capital letters
-                repl=' ',
-                string=dataset['Review'][i]) 
+                    repl=' ',
+                    string=dataset['Review'][i]) 
     review = review.lower()
     review = review.split()
     ps = PorterStemmer()
