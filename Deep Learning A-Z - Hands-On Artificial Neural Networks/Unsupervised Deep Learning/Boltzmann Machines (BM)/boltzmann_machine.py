@@ -1,4 +1,4 @@
-# Blotzmann Machines
+# Restricted Boltzmann Machine
 
 # Importing Libraries
 import numpy as np
