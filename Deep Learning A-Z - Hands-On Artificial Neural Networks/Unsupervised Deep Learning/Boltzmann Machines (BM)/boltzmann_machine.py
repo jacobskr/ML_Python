@@ -64,13 +64,22 @@ test_set[test_set >= 3] = 1
 
 # Creating the architecture of the Neural Network
 class RBM():
+    
+    
     def __init__(self, nv, nh):
         # Weights - number of hidden and visible nodes
         self.W = torch.randn(nh, nv) 
         # Biases
-        self.a = torch.randn(1, nh) # 2d tensor coresponding to batch, bias
-        self.b = torch.randn(1, nv) # 2d tensor coresponding to batch, bias
-        
+        self.a = torch.randn(1, nh) # 2D tensor coresponding to batch, bias
+        self.b = torch.randn(1, nv) # 2D tensor coresponding to batch, bias
+    
+    
+    def sample_h(self, x):
+        # Probability of hidden neuron given visible neuron ...  P(h|v)
+        wx = torch.mm(x, self.W.t())
+        activation = wx + self.a.expand_as(wx) # Bias applied to each line of batch
+        p_h_given_v = torch.sigmoid(activation) # probability hidden node is activated given the visible node 
+        return p_h_given_v, torch.bernoulli(p_h_given_v)
 
 
 
