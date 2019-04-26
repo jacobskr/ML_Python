@@ -76,11 +76,53 @@ class RBM():
     
     def sample_h(self, x):
         # Probability of hidden neuron given visible neuron ...  P(h|v)
-        wx = torch.mm(x, self.W.t())
+        wx = torch.mm(x, self.W.t()) # mm is product of two tensors
         activation = wx + self.a.expand_as(wx) # Bias applied to each line of batch
         p_h_given_v = torch.sigmoid(activation) # probability hidden node is activated given the visible node 
         return p_h_given_v, torch.bernoulli(p_h_given_v)
+    
+    
+    def sample_v(self, y):
+        # Probability of hidden neuron given visible neuron ...  P(h|v)
+        wy = torch.mm(y, self.W)
+        activation = wy + self.b.expand_as(wy) # Bias applied to each line of batch
+        p_v_given_h = torch.sigmoid(activation) # probability visible node is activated given the hidden node 
+        return p_v_given_h, torch.bernoulli(p_v_given_h)
+    
+    
+    def train(self, v0, vk, ph0, phk):
+        self.W += (torch.mm(v0.t(),ph0) - torch.mm(vk.t(),phk)).t()
+        self.b += torch.sum((v0 - vk), 0) # Trick to keep a tensor of 2 dimensions
+        self.a += torch.sum((ph0 - phk), 0)
+        
+        # Can also add things like learning rate, etc if we want to imporve model.
 
+# Define parameters
+nv = len(training_set[0])
+nh = 100 # Good starting point for number of features to detect. Can adjust.
+batch_size = 100 # Bigger numbers are faster learning, a batch size of 1 is reinforcement learning
+
+# Instantiate RMB
+rbm = RBM(nv, nh)
+
+# Train RBM
+nb_epoch = 10
+for epoch in range(1, nb_epoch + 1):
+    train_loss = 0
+    s = 0.
+    for id_user in range(0, nb_users - batch_size, batch_size):
+        vk = training_set[id_user:id_user + batch_size]
+        v0 = training_set[id_user:id_user + batch_size]
+        ph0, _ = rbm.sample_h(v0)
+        for k in range(10):
+            _, hk = rbm.sample_h(vk)
+            _, vk = rbm.sample_v(hk)
+            vk[v0 < 0] = v0[v0 < 0] # Only worried about movies that were rated by user
+        phk, _ = rbm.sample_h(vk)
+        rbm.train(v0, vk, ph0, phk)
+        train_loss += torch.mean(torch.abs(v0[v0 >= 0] - vk[v0 >= 0]))
+        s += 1.
+    print('Epoch: ' + str(epoch) + ' loss: ' + str(train_loss / s))
 
 
 
