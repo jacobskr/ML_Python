@@ -94,6 +94,12 @@ class RBM():
         self.W += (torch.mm(v0.t(),ph0) - torch.mm(vk.t(),phk)).t()
         self.b += torch.sum((v0 - vk), 0) # Trick to keep a tensor of 2 dimensions
         self.a += torch.sum((ph0 - phk), 0)
+    
+    
+    def predict(self, x): # x: visible nodes
+        _, h = self.sample_h( x)
+        _, v = self.sample_v( h)
+        return v
         
         # Can also add things like learning rate, etc if we want to imporve model.
 
@@ -122,11 +128,56 @@ for epoch in range(1, nb_epoch + 1):
         rbm.train(v0, vk, ph0, phk)
         train_loss += torch.mean(torch.abs(v0[v0 >= 0] - vk[v0 >= 0]))
         s += 1.
-    print('Epoch: ' + str(epoch) + ' loss: ' + str(train_loss / s))
+    print('Epoch: ' + str(epoch) + ' loss: ' + str(train_loss.item() / s))
 
+# Tesing the RBM
+test_loss = 0
+s = 0.
+for id_user in range(0, nb_users):
+    v = training_set[id_user:id_user + 1]
+    vt = test_set[id_user:id_user + 1]
+    if len(vt[vt >= 0]) > 0:
+        _, h = rbm.sample_h(v)
+        _, v = rbm.sample_v(h)
+    test_loss += torch.mean(torch.abs(v0[v0 >= 0] - vk[v0 >= 0]))
+    s += 1.
+print('Test loss: ' + str(test_loss.item() / s))
 
+# Below not from course
 
+#Check User-Movie match in a single instance
+target_user_id = 1
+target_movie_id = 50
+z = Variable(training_set[target_user_id-1]).unsqueeze(0)
+output = rbm.predict(z)
+output_numpy = output.data.numpy()
+print (''+ str(output_numpy[0,target_movie_id-1]))
 
+#Create copy of input files
+ratings2=ratings.copy()
+users2=users.copy()
+movies2=movies.copy()
+ratings2.columns = ['User','MovieId','Rating','Timestamp']
+users2.columns = ['UserId','Gender','X','Y','Z']
+movies2.columns = ['Reference','Name','Genre']
+
+#create recommendation set for each user (movies sorted in no particular order)
+reco = pd.DataFrame(columns=['UserId','MovieId'])
+result = pd.DataFrame(columns=['UserId','MovieId','Reco'])
+for user in range(1, nb_users + 1):
+    seen = ratings2[ratings2['User']==user]
+    seenlist = seen['MovieId'].tolist()        
+    z = Variable(training_set[user-1]).unsqueeze(0)
+    output = rbm.predict(z)
+    output_numpy = output.data.numpy()
+    result = pd.DataFrame(output_numpy)
+    result=result.melt()
+    result.columns=['MovieId','Reco']
+    result['UserId']=user
+    result = result.loc[~result['MovieId'].isin(seenlist)]
+    result=result[result['Reco']==1]
+    result=result[['UserId','MovieId']]
+    reco=reco.append(result)
 
 
 
