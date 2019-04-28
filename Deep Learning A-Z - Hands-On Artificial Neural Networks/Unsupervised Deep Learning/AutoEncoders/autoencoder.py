@@ -70,17 +70,63 @@ class SAE(nn.Module): # Make a child class of the torch nn.Module
            raise Exception("Activation function must be either 'sigmoid' or 'rectifier'")
 
 
-    def 
+    def forward(self, x): # Function for encoding and decoding, forward propagation
+        x = self.activation(self.fc1(x)) # Encoding first full connection
+        x = self.activation(self.fc2(x)) # Encoding second full connection       
+        x = self.activation(self.fc3(x)) # Decoding third full connection
+        x = self.fc4(x) # Vector of predicted ratings
+        return x
 
-    
-    
-    
-    
-    
-    
+
 # Number of neurons in each hidden layer, can optimize these
 in_features = nb_movies
 out_feat1 = 20
 out_feat2 = 10
 out_feat3 = 20
 activation = 'sigmoid'
+
+# Initialize SAE
+sae = SAE(in_features, out_feat1, out_feat2, out_feat3, activation='sigmoid')
+
+# Loss criterion and optimizer. Optimizer can be RMSProp or Adam or other.
+# Can also adjust learning rate and the decay.
+criterion = nn.MSELoss()
+optimizer = optim.RMSprop(params=sae.parameters(),
+                          lr=0.01,
+                          weight_decay=0.5)
+
+# Train the SAE
+nb_epoch =  200
+for epoch in range(1, nb_epoch + 1):
+    train_loss = 0
+    s = 0.
+    for id_user in range(nb_users):
+        inputs = Variable(training_set[id_user]).unsqueeze(0) # Pytorch won't take 1D vector
+        target = inputs.clone()
+        if torch.sum(target.data > 0) > 0:
+            output = sae.forward(inputs)
+            target.require_grad = False # Don't need gradient descent on the target vector
+            output[target == 0] = 0
+            loss = criterion(output, target)
+            mean_corrector = nb_movies / float(torch.sum(target.data > 0) + 1e-10)
+            loss.backward()
+            train_loss += np.sqrt(loss.data.item() * mean_corrector)
+            s += 1.
+            optimizer.step()
+    print('Epoch: ' + str(epoch) + '. Loss: ' + str(train_loss / s))
+
+# Testing the SAE
+test_loss = 0
+s = 0.
+for id_user in range(nb_users):
+    inputs = Variable(training_set[id_user]).unsqueeze(0) # Pytorch won't take 1D vector
+    target =  Variable(test_set[id_user]).unsqueeze(0)
+    if torch.sum(target.data > 0) > 0:
+        output = sae.forward(inputs)
+        target.require_grad = False # Don't need gradient descent on the target vector
+        output[target == 0] = 0
+        loss = criterion(output, target)
+        mean_corrector = nb_movies / float(torch.sum(target.data > 0) + 1e-10)
+        test_loss += np.sqrt(loss.data.item() * mean_corrector)
+        s += 1.
+print('Test loss: ' + str(test_loss / s))
