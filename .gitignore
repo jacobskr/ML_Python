@@ -164,3 +164,4 @@ Deep Learning A-Z - Hands-On Artificial Neural Networks/Unsupervised Deep Learni
 *.pyc
 Machine Learning A-Z - Hands-On Python & R Data Science/Deep Learning/Convolutional Neural Networks (CNN)/Data/test_set/cats/.DS_Store
 Machine Learning A-Z - Hands-On Python & R Data Science/Deep Learning/Convolutional Neural Networks (CNN)/Data/test_set/.DS_Store
+*.pth

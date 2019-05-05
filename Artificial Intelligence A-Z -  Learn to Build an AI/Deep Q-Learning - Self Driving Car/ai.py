@@ -1,6 +1,7 @@
 # Self Driving Car - AI
 
 # Importing the Libraries
+
 import numpy as np
 import random
 import os
@@ -13,7 +14,7 @@ from torch.autograd import Variable
 
 
 # Creating the architecture of the Neural Network
-class Network(nn.module): # Inherate from nn.module
+class Network(nn.Module): # Inherate from nn.module
     
     def __init__(self, input_size, nb_action):
         super(Network, self).__init__() # Use all tools of nn.module
@@ -57,4 +58,48 @@ class Dqn():
         self.last_reward = 0.
 
     def select_action(self, state):
-        probs = F.softmax(self.model(Variable(state, volatile=True)) * 7) # T=7
+        probs = F.softmax(self.model(Variable(state, volatile=True)) * 100) # T=7
+        action = probs.multinomial(1)
+        return action.data[0,0]
+    
+    def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
+        outputs = self.model(batch_state).gather(1, batch_action.unsqueeze(1)).squeeze(1) # So batch_action has same dimension as batch_state
+        next_outputs = self.model(batch_next_state).detach().max(1)[0]
+        target = self.gamma * next_outputs + batch_reward
+        td_loss = F.smooth_l1_loss(outputs, target) # Temporal Difference Loss
+        self.optimizer.zero_grad()
+        td_loss.backward()
+        self.optimizer.step()
+    
+    def update(self, reward, new_signal):
+        new_state = torch.Tensor(new_signal).unsqueeze(0)
+        self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward])))
+        action = self.select_action(new_state)
+        if len(self.memory.memory) > 100:
+            batch_state, batch_next_state, batch_action, batch_reward = self.memory.sample(100)
+            self.learn(batch_state, batch_next_state, batch_reward, batch_action)
+        self.last_action = action
+        self.last_state = new_state
+        self.last_reward = reward
+        self.reward_window.append(reward)
+        if len(self.reward_window) > 1000:
+            del self.reward_window[0]
+        return action
+    
+    def score(self):
+        return sum(self.reward_window) / (len(self.reward_window) + 1.)
+    
+    def save(self):
+        torch.save({'state_dict': self.model.state_dict(),
+                    'optimizer': self.optimizer.state_dict()
+                    }, 'last_brain.pth')
+    
+    def load(self):
+        if os.path.isfile('last_brain.pth'):
+            print("=> Loading checkpoint...")
+            checkpoint = torch.load('last_brain.pth')
+            self.model.load_state_dict(checkpoint['state_dict'])
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+            print("Done!")
+        else:
+            print("No checkpoint found...")
